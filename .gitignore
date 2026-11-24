@@ -1,0 +1,5 @@
+dist/
+.build/
+.inbox-release/
+__pycache__/
+.DS_Store
