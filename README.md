@@ -33,6 +33,7 @@
 
 ### 3. 올리기
 
+- **가장 쉬운 방법**: 사이트의 [전시 올리기](https://jeonsan-9.github.io/aaa-exhibition/upload/) 페이지에서 전시 이름과 비밀번호를 적고 zip 을 올립니다. GitHub 계정이 없어도 됩니다. (95MB까지. 처음 한 번 [올리기 서버 설정](uploader/README.md)이 필요합니다)
 - **25MB 이하**: 이 레포의 [`inbox`](inbox) 폴더에서 **Add file → Upload files** 로 zip을 끌어다 놓고 **Commit changes**.
 - **25MB 초과**: **Releases → Draft a new release** 에서 태그를 `2026-2`처럼 적고 zip을 첨부한 뒤 **Publish release**. (2GB까지 됩니다)
 
@@ -70,4 +71,7 @@ python -m http.server -d dist     # http://localhost:8000
 | `양식/` | 빈 작품목록 양식 |
 | `site/` | 디자인 (`style.css`, `app.js`). 모든 전시에 공통으로 쓰입니다 |
 | `tools/build.py` | zip을 읽어 사이트를 만드는 스크립트 |
+| `pages/upload.html` | 전시 올리기 페이지 |
+| `uploader/` | 올리기 서버(Cloudflare Worker) 코드와 [설정 안내](uploader/README.md) |
+| `config.json` | 올리기 서버 주소 |
 | `exhibitions/<이름>/` | (선택) zip 대신 풀어 놓은 폴더를 직접 두고 싶을 때 |

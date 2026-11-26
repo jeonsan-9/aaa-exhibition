@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>전시 올리기 · AAA 천체사진전</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=Noto+Serif+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .up { min-height: 100vh; }
+  .up-top { padding-block: 28px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--ink-dim); }
+  .up-top a { text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+  .up-top a:hover { color: var(--ink); border-color: var(--ink-dim); }
+  .up-head { padding-block: clamp(28px, 7vh, 72px) clamp(32px, 6vh, 56px); max-width: 720px; }
+  .up-head h1 { font: 600 clamp(2rem, 5.4vw, 3.4rem)/1.2 var(--serif); letter-spacing: -0.01em; }
+  .up-head p { margin-top: 18px; color: var(--ink-dim); max-width: 34em; }
+  .up-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 88px); align-items: start; padding-bottom: 96px; }
+  .steps { display: grid; gap: 0; counter-reset: s; margin: 0; padding: 0; list-style: none; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 3.2em 1fr; padding-block: 24px; border-top: 1px solid var(--line); }
+  .steps li:last-child { border-bottom: 1px solid var(--line); }
+  .steps li::before { content: "0" counter(s); font-family: var(--mono); font-size: 0.8rem; color: var(--lamp); padding-top: 0.35em; }
+  .steps h2 { font: 500 1.12rem/1.5 var(--serif); }
+  .steps p { margin-top: 6px; color: var(--ink-dim); font-size: 0.93rem; }
+  .steps .cta { margin-top: 14px; padding: 0.6em 1.1em; font-size: 0.88rem; }
+  .steps .cta:hover { border-color: var(--lamp); color: var(--lamp); }
+  .steps code { font-family: var(--mono); font-size: 0.86em; color: var(--ink); }
+
+  .card { background: var(--paper); color: var(--paper-ink); padding: clamp(22px, 3.4vw, 36px); box-shadow: 0 30px 60px -30px #000; position: sticky; top: 28px; }
+  .card h2 { font: 600 1.25rem/1.4 var(--serif); margin-bottom: 20px; }
+  .field { display: grid; gap: 6px; margin-bottom: 18px; }
+  .field label, .field .lab { font-size: 0.82rem; font-weight: 500; }
+  .field small { font-size: 0.78rem; color: #6a6458; }
+  .field input[type="text"], .field input[type="password"] {
+    font: 400 1rem/1.4 var(--sans); color: inherit; background: #f4efe3; border: 1px solid #b9b19f; border-radius: 0; padding: 0.7em 0.8em; width: 100%;
+  }
+  .field input:focus-visible, .drop:focus-within { outline: 2px solid #1d1b18; outline-offset: 2px; }
+  .drop { position: relative; border: 1px dashed #8d8676; background: #f4efe3; padding: 22px 16px; text-align: center; font-size: 0.92rem; transition: background 0.15s; }
+  .drop.over { background: #fff9ea; border-style: solid; }
+  .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .drop b { display: block; font-weight: 500; overflow-wrap: anywhere; }
+  .drop span { color: #6a6458; font-size: 0.8rem; }
+  .go { width: 100%; border: 0; background: var(--paper-ink); color: var(--paper); padding: 0.95em 1em; font-weight: 500; font-size: 1rem; }
+  .go:hover:not(:disabled) { background: #000; }
+  .go:disabled { opacity: 0.45; cursor: default; }
+  .msg { margin-top: 16px; padding: 12px 14px; font-size: 0.9rem; border-left: 3px solid; }
+  .msg.err { border-color: #b3321f; background: #f3dcd3; }
+  .msg.warn { border-color: #a8771c; background: #f3e6c4; }
+  .msg.ok { border-color: #2f6b3c; background: #dbe8d6; }
+  .msg a { font-weight: 500; overflow-wrap: anywhere; }
+  .bar { height: 4px; background: #cfc8b7; margin-top: 16px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--paper-ink); transition: width 0.2s; }
+  .state { margin-top: 8px; font-family: var(--mono); font-size: 0.76rem; color: #6a6458; }
+  @media (max-width: 820px) {
+    .up-grid { grid-template-columns: 1fr; }
+    .card { position: static; order: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) { .bar i, .drop { transition: none; } }
+</style>
+</head>
+<body>
+<div class="app up">
+  <header class="in up-top"><span>AAA 천체사진전</span><a href="../">전시 보러 가기 →</a></header>
+  <main class="in">
+    <div class="up-head">
+      <h1>전시 올리기</h1>
+      <p>양식을 채우고 사진과 함께 zip 으로 묶어 올리면, 3분쯤 뒤에 전시 사이트가 만들어집니다.</p>
+    </div>
+    <div class="up-grid">
+      <ol class="steps">
+        <li><div>
+          <h2>양식을 내려받아 채웁니다</h2>
+          <p>엑셀 파일에 작품 제목, 이름, 코멘트를 한 줄에 한 작품씩 적습니다. 전시 제목과 인사말도 같은 파일의 다른 시트에 적습니다.</p>
+          <a class="cta" href="form.xlsx" download="작품목록_양식.xlsx">양식 내려받기 (.xlsx)</a>
+        </div></li>
+        <li><div>
+          <h2>사진과 양식을 한 폴더에 모읍니다</h2>
+          <p>양식의 ‘파일’ 칸에 적은 이름과 사진 파일 이름이 같으면 됩니다. 비워 두면 이름이 들어간 사진을 알아서 찾습니다.</p>
+        </div></li>
+        <li><div>
+          <h2>폴더를 zip 으로 압축합니다</h2>
+          <p>윈도우는 폴더를 오른쪽 클릭해 <code>압축</code>, 맥은 <code>“폴더” 압축</code>을 누릅니다. 95MB 가 넘으면 사진 크기를 줄여 주세요.</p>
+        </div></li>
+        <li><div>
+          <h2>이 페이지에서 올립니다</h2>
+          <p>전시 이름은 주소가 됩니다. <code>2026-2</code> 로 올리면 <code>…/2026-2/</code> 에서 열립니다. 같은 이름으로 다시 올리면 그 전시가 새 것으로 바뀝니다.</p>
+        </div></li>
+      </ol>
+
+      <form class="card" id="f" novalidate>
+        <h2>올리기</h2>
+        <div class="field">
+          <label for="name">전시 이름</label>
+          <input id="name" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" placeholder="2026-2" required>
+          <small>영문, 숫자, - 만 쓸 수 있습니다.</small>
+        </div>
+        <div class="field">
+          <span class="lab" id="fl">zip 파일</span>
+          <div class="drop" id="drop">
+            <input id="file" type="file" accept=".zip,application/zip" aria-labelledby="fl" required>
+            <b id="fname">여기에 끌어다 놓거나 눌러서 고르기</b>
+            <span id="fsize">zip 파일 하나, 95MB 이하</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="pw">비밀번호</label>
+          <input id="pw" type="password" autocomplete="off" required>
+          <small>집행부에게 받은 올리기 비밀번호입니다.</small>
+        </div>
+        <button class="go" id="go" type="submit">올리기</button>
+        <div class="bar" id="bar" hidden><i></i></div>
+        <p class="state" id="state" hidden></p>
+        <div class="msg" id="msg" role="status" hidden></div>
+      </form>
+    </div>
+  </main>
+</div>
+<script type="application/json" id="conf">__CONFIG__</script>
+<script>
+(() => {
+  const conf = JSON.parse(document.getElementById("conf").textContent);
+  const $ = (id) => document.getElementById(id);
+  const f = $("f"), nameEl = $("name"), fileEl = $("file"), pwEl = $("pw"), go = $("go");
+  const drop = $("drop"), msg = $("msg"), bar = $("bar"), state = $("state");
+  const MAX = 95 * 1024 * 1024;
+  const RESERVED = ["upload", "assets", "index"];
+  let confirmed = "";
+
+  const show = (kind, html) => { msg.className = "msg " + kind; msg.innerHTML = html; msg.hidden = false; };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const mb = (n) => (n / 1024 / 1024).toFixed(1) + "MB";
+
+  if (!conf.url) {
+    show("warn", "올리기 기능이 아직 켜지지 않았습니다. 관리자에게 알려 주세요.");
+    go.disabled = true;
+  }
+
+  const picked = () => {
+    const file = fileEl.files[0];
+    $("fname").textContent = file ? file.name : "여기에 끌어다 놓거나 눌러서 고르기";
+    $("fsize").textContent = file ? mb(file.size) : "zip 파일 하나, 95MB 이하";
+    if (file && !nameEl.value) {
+      const guess = file.name.replace(/\.zip$/i, "").toLowerCase();
+      if (/^[0-9a-z][0-9a-z_-]{0,39}$/.test(guess)) nameEl.value = guess;
+    }
+  };
+  fileEl.addEventListener("change", picked);
+  ["dragenter", "dragover"].forEach((e) => drop.addEventListener(e, () => drop.classList.add("over")));
+  ["dragleave", "drop"].forEach((e) => drop.addEventListener(e, () => drop.classList.remove("over")));
+  nameEl.addEventListener("input", () => { confirmed = ""; go.textContent = "올리기"; });
+
+  f.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if (go.disabled) return;
+    const name = nameEl.value.trim().toLowerCase();
+    const file = fileEl.files[0];
+    const pw = pwEl.value;
+    if (!/^[0-9a-z][0-9a-z_-]{0,39}$/.test(name) || RESERVED.includes(name)) {
+      nameEl.focus();
+      return show("err", "전시 이름은 영문, 숫자, - 만 쓸 수 있습니다. 예: 2026-2");
+    }
+    if (!file) return show("err", "zip 파일을 골라 주세요.");
+    if (file.size > MAX) return show("err", `파일이 ${mb(file.size)} 입니다. 95MB 이하로 줄여 주세요.`);
+    const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+    if (head[0] !== 0x50 || head[1] !== 0x4b) return show("err", "zip 파일이 아닙니다. 폴더를 zip 으로 압축해서 올려 주세요.");
+    if (!pw) { pwEl.focus(); return show("err", "비밀번호를 입력해 주세요."); }
+    if (conf.existing.includes(name) && confirmed !== name) {
+      confirmed = name;
+      go.textContent = "기존 전시 바꾸기";
+      return show("warn", `<b>${esc(name)}</b> 전시가 이미 있습니다. 올리면 지금 전시가 새 것으로 바뀝니다. 맞다면 한 번 더 눌러 주세요.`);
+    }
+
+    msg.hidden = true;
+    go.disabled = true;
+    bar.hidden = state.hidden = false;
+    const fill = bar.firstElementChild;
+    const done = () => { go.disabled = false; bar.hidden = state.hidden = true; fill.style.width = "0"; };
+    // 큰 파일을 보내기 전에 비밀번호부터 확인한다
+    state.textContent = "비밀번호 확인 중…";
+    try {
+      const pre = await fetch(`${conf.url}/?check=1&name=${encodeURIComponent(name)}`, { method: "PUT", headers: { "X-Password": pw } });
+      const res = await pre.json().catch(() => ({}));
+      if (!pre.ok) { done(); return show("err", esc(res.error || `올리지 못했습니다 (${pre.status}).`)); }
+    } catch (e) {
+      done();
+      return show("err", "올리기 서버에 닿지 못했습니다. 인터넷 연결을 확인하고 다시 해 주세요.");
+    }
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", `${conf.url}/?name=${encodeURIComponent(name)}`);
+    xhr.setRequestHeader("X-Password", pw);
+    xhr.setRequestHeader("Content-Type", "application/zip");
+    xhr.upload.onprogress = (e) => {
+      if (!e.lengthComputable) return;
+      const p = e.loaded / e.total;
+      fill.style.width = (p * 100).toFixed(1) + "%";
+      state.textContent = p < 1 ? `올리는 중 ${mb(e.loaded)} / ${mb(e.total)}` : "마무리하는 중…";
+    };
+    xhr.onerror = () => { done(); show("err", "올리기 서버에 닿지 못했습니다. 인터넷 연결을 확인하고 다시 해 주세요."); };
+    xhr.onload = () => {
+      done();
+      let res = {};
+      try { res = JSON.parse(xhr.responseText); } catch (e) { /* 아래에서 처리 */ }
+      if (xhr.status === 200 && res.ok) {
+        const url = res.url || new URL(`../${name}/`, location.href).href;
+        confirmed = ""; go.textContent = "올리기"; pwEl.value = "";
+        return show("ok", `올렸습니다. 3분쯤 뒤에 아래 주소에서 열립니다.<br><a href="${esc(url)}">${esc(url)}</a>`);
+      }
+      show("err", esc(res.error || `올리지 못했습니다 (${xhr.status}). 잠시 뒤에 다시 해 주세요.`));
+    };
+    state.textContent = "올리는 중…";
+    xhr.send(file);
+  });
+})();
+</script>
+</body>
+</html>

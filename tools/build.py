@@ -50,6 +50,8 @@ DIST = ROOT / "dist"
 WORK = ROOT / ".build"
 IMG_EXT = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif", ".tif", ".tiff", ".bmp", ".gif"}
 DEFAULT_SECTION = "본 전시"
+RESERVED = {"upload", "assets", "index"}
+FORM = ROOT / "양식" / "작품목록_양식.xlsx"
 E = html.escape
 warnings: list[str] = []
 
@@ -537,6 +539,7 @@ def render(slug: str, info: dict, rooms: dict, greetings: list[dict], works: lis
   <div class="credits"><h2>참여 작가</h2><ul>{credits}</ul></div>
   <div class="foot-meta">
     <p><b>{E(title)}</b><br>{E(host)}</p>
+    {'<p class="past"><a class="foot-upload" href="../upload/">전시 올리기</a></p>' if upload_url() else ""}
     {f'<p class="past"><span>다른 전시</span>{past}</p>' if past else ""}
   </div>
 </div></footer>
@@ -564,6 +567,30 @@ def render(slug: str, info: dict, rooms: dict, greetings: list[dict], works: lis
 """
 
 
+# ───────────────────────── 올리기 페이지 ─────────────────────────
+def upload_url() -> str:
+    """config.json 의 upload_url (올리기 서버 주소). 없으면 빈 문자열."""
+    try:
+        url = str(json.loads((ROOT / "config.json").read_text(encoding="utf-8")).get("upload_url") or "").strip()
+    except (OSError, ValueError):
+        return ""
+    return url.rstrip("/") if url.startswith("https://") else ""
+
+
+def build_upload_page(existing: list[str]) -> None:
+    page = ROOT / "pages" / "upload.html"
+    if not page.exists():
+        return
+    out = DIST / "upload"
+    out.mkdir(parents=True)
+    shutil.copytree(SITE, out / "assets")
+    if FORM.exists():
+        shutil.copy(FORM, out / "form.xlsx")
+    conf = {"url": upload_url(), "existing": existing}
+    text = page.read_text(encoding="utf-8").replace("__CONFIG__", json.dumps(conf, ensure_ascii=False).replace("</", "<\\/"))
+    (out / "index.html").write_text(text, encoding="utf-8")
+
+
 # ───────────────────────── 실행 ─────────────────────────
 def collect_sources() -> dict[str, Path]:
     src: dict[str, Path] = {}
@@ -575,6 +602,12 @@ def collect_sources() -> dict[str, Path]:
     zips = sorted((ROOT / "inbox").glob("*.zip")) + sorted((ROOT / ".inbox-release").rglob("*.zip"))
     for z in zips:
         slug = slugify(z.stem)
+        # 릴리스에 zip 이 하나뿐이면 릴리스 이름(태그)이 곧 전시 주소다
+        if z.parent.parent.name == ".inbox-release" and len(list(z.parent.glob("*.zip"))) == 1:
+            slug = slugify(z.parent.name)
+        if slug in RESERVED:
+            warn(f"{z.name}: '{slug}' 는 전시 이름으로 쓸 수 없습니다. 건너뜁니다.")
+            continue
         dest = WORK / "src" / slug
         print(f"압축 풀기: {z.relative_to(ROOT)}")
         try:
@@ -625,6 +658,8 @@ def main() -> int:
         built.append((slug, info, rooms, greetings, works))
         print(f"  작품 {len(works)}점")
 
+    build_upload_page([b[0] for b in built])
+    (DIST / ".nojekyll").write_text("")
     if not built:
         print("전시가 하나도 없습니다. inbox/ 에 zip 을 넣어 주세요.")
         (DIST / "index.html").write_text("<!doctype html><meta charset=utf-8><title>AAA 천체사진전</title><p>준비 중입니다.</p>", encoding="utf-8")
