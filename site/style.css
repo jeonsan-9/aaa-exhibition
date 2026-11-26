@@ -79,6 +79,9 @@ dialog:focus-visible, .viewer-text:focus-visible, .index:focus-visible { outline
 .nav nav { display: flex; gap: clamp(14px, 2.4vw, 34px); font-family: var(--sans); letter-spacing: 0.02em; font-size: 0.82rem; }
 .nav-index { background: none; border: 0; padding: 0; color: var(--ink-dim); font-family: var(--sans); font-size: 0.82rem; }
 .nav-index:hover { color: var(--ink); }
+.nav-right { display: flex; align-items: center; gap: clamp(12px, 1.8vw, 22px); }
+.nav .nav-upload { border: 1px solid var(--line); padding: 0.45em 0.9em; font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0.02em; transition: border-color 0.15s, color 0.15s; }
+.nav .nav-upload:hover { border-color: var(--lamp); color: var(--lamp); }
 .nav-index span { font-family: var(--mono); color: var(--lamp); margin-left: 0.3em; }
 
 /* ── 입구: 타이틀 월 ── */

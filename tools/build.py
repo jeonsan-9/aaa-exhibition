@@ -500,7 +500,10 @@ def render(slug: str, info: dict, rooms: dict, greetings: list[dict], works: lis
 <header class="nav">
   <a class="nav-id" href="#top"><b>AAA</b><span>{E(term)}</span></a>
   <nav aria-label="전시 안내">{nav}</nav>
-  <button class="nav-index" type="button" data-open-index>작품 목록 <span>{len(works)}</span></button>
+  <div class="nav-right">
+    <button class="nav-index" type="button" data-open-index>작품 목록 <span>{len(works)}</span></button>
+    <a class="nav-upload" href="../upload/">작품 올리기</a>
+  </div>
 </header>
 
 <main id="top">
